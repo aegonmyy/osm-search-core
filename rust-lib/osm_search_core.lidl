@@ -1,0 +1,5 @@
+module osm_search_core {
+  version "0.1.0"
+  description "Standalone OSM geocoding/search core: reads an OSM region PBF, builds a per-region SQLite FTS5+rtree index, and answers geocode / reverse-geocode queries offline. Consumed by the osm_search ui_qml app, which passes the PBF path + catalog + cache_dir as invoke_op arguments (the core has no module dependencies)."
+  method invoke_op(name: tstr, args: tstr) -> tstr
+}

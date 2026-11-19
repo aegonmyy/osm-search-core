@@ -1,0 +1,25 @@
+{
+  "name": "osm_search_core",
+  "version": "0.1.0",
+  "description": "Standalone OSM geocoding/search core: reads an OSM region PBF, builds a per-region SQLite FTS5+rtree index, and answers geocode / reverse-geocode queries offline. Consumed by the osm_search ui_qml app, which passes PBF path + catalog + cache_dir as invoke_op arguments (the core declares no module dependencies).",
+  "author": "aegonmyy",
+  "type": "core",
+  "interface": "cdylib",
+  "category": "general",
+  "main": "osm_search_core_plugin",
+  "dependencies": [],
+  "include": [],
+  "capabilities": [],
+  "codegen": {
+    "lidl": "rust-lib/osm_search_core.lidl",
+    "rust": { "crate": "rust-lib", "staticlib": "osm_search_core" }
+  },
+  "nix": {
+    "external_libraries": [],
+    "packages": { "build": [], "runtime": [] },
+    "cmake": { "find_packages": [], "extra_include_dirs": [] },
+    "rust": {
+      "packages": { "build": [], "runtime": [] }
+    }
+  }
+}

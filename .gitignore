@@ -1,2 +1,14 @@
+# Rust build artifacts
 /target/
-Cargo.lock
+/rust-lib/target/
+
+# Cargo.lock IS committed — the builder's rustStaticLib reads
+# rust-lib/Cargo.lock (mkLogosModule.nix cargoLock.lockFile), and a reproducible
+# cross-build needs the lockfile pinned. Do NOT ignore it.
+
+# Builder-staged SDK source (injected at build time, never committed)
+/rust-lib/logos-rust-sdk-src/
+/rust-lib/generated/
+
+# Generated scaffold (emitted by logos-lidl-gen at build time)
+/rust-lib/generated/provider_gen.rs

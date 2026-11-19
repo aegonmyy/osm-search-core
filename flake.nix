@@ -1,30 +1,29 @@
 {
-  description = "osm_search_core — standalone OSM geocoding/search cdylib";
+  description = "osm_search_core — standalone OSM geocoding/search core (Rust cdylib). Reads an OSM region PBF, builds a per-region SQLite FTS5+rtree index, answers geocode/reverse-geocode offline. No module dependencies; the osm_search app passes catalog/cache_dir/pbf as invoke_op args.";
+
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay.url = "github:oxalica/rust-overlay";
+    logos-module-builder.url = "github:logos-co/logos-module-builder";
+    nixpkgs.follows = "logos-module-builder/nixpkgs";
+    # Provides logos-lidl-gen (the contract->scaffold generator the builder
+    # runs) and the SDK the crate links. One extra input vs a C++ module.
+    logos-rust-sdk.url = "github:logos-co/logos-rust-sdk/49dbb0768a9a18cfaf264cc3ecfa55cca2630157";
+    logos-rust-sdk.inputs.logos-module-builder.follows = "logos-module-builder";
   };
-  outputs = inputs@{ nixpkgs, flake-utils, rust-overlay, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs { inherit system overlays; };
-        # Cross target triples supported by Logos
-        targets = {
-          "x86_64-linux" = { triple = "x86_64-unknown-linux-gnu"; ext = "so"; prefix = "lib"; };
-          "aarch64-darwin" = { triple = "aarch64-apple-darwin"; ext = "dylib"; prefix = "lib"; };
-          "x86_64-darwin" = { triple = "x86_64-apple-darwin"; ext = "dylib"; prefix = "lib"; };
-          "x86_64-windows" = { triple = "x86_64-pc-windows-gnu"; ext = "dll"; prefix = ""; };
-        };
-      in {
-        packages.${system}.default = pkgs.rustPlatform.buildRustPackage {
-          pname = "osm-search-core";
-          version = "0.1.0";
+
+  outputs = inputs@{ self, logos-module-builder, ... }:
+    let
+      nixpkgs = logos-module-builder.inputs.nixpkgs;
+      # x86_64-windows is a mingw cross-build realised on a Linux runner;
+      # the builder bakes its pinned logos-nix into lib, so mkLogosModule
+      # already produces a packages.x86_64-windows attribute.
+      systems = [ "aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux" "x86_64-windows" ];
+      forAllSystems = f: nixpkgs.lib.genAttrs systems f;
+    in {
+      packages = forAllSystems (system:
+        (logos-module-builder.lib.mkLogosModule {
           src = ./.;
-          cargoLock.lockFile = ./Cargo.lock;
-          doCheck = false;
-          # native build for current system
-        };
-      });
+          configFile = ./metadata.json;
+          flakeInputs = inputs;
+        }).packages.${system});
+    };
 }

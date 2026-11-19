@@ -173,6 +173,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "logos-rust-sdk"
+version = "0.3.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "md-5"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -215,13 +223,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
-name = "osm-search-core"
+name = "osm_search_core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
  "flate2",
  "hex",
+ "logos-rust-sdk",
  "md-5",
  "rusqlite",
  "serde",

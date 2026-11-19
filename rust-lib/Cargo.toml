@@ -1,0 +1,28 @@
+[package]
+name = "osm_search_core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+# Standalone crate — the empty table keeps cargo from adopting any workspace it
+# finds in a parent directory.
+[workspace]
+
+[lib]
+name = "osm_search_core"
+crate-type = ["staticlib"]
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled"] }
+anyhow = "1"
+flate2 = "1"
+bytes = "1"
+md-5 = { version = "0.10", features = ["asm"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hex = "0.4"
+# Path dependency staged by the module-builder's `rust-sdk-src` output before
+# the crate compiles, so the crate locks against the SAME SDK the builder links
+# and runs the lidl-gen generator from. Self-contained otherwise: no shared
+# code with the `osm` module's cdylib.
+logos-rust-sdk = { path = "../logos-rust-sdk-src" }
