@@ -17,7 +17,12 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 anyhow = "1"
 flate2 = "1"
 bytes = "1"
-md-5 = { version = "0.10", features = ["asm"] }
+# md-5 WITHOUT the "asm" feature: the asm backend pulls in `md5-asm` which
+# uses Unix-only inline asm and emits `compile_error!("crate does not support
+# Windows targets")` on the mingw target. The pure-Rust fallback works on all
+# 5 platforms (incl. x86_64-pc-windows-gnu); the speed cost is negligible for
+# PBF MD5 streaming.
+md-5 = "0.10"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
